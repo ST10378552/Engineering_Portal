@@ -1,0 +1,131 @@
+/* Action.css */
+.form-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+  border: 1px solid #e2e8f0;
+}
+
+.form-header {
+  background: #0f172a;
+  padding: 2rem 2.5rem;
+  color: white;
+}
+
+.header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.main-title {
+  font-size: 1.75rem;
+  font-weight: 900;
+  font-style: italic;
+  text-transform: uppercase;
+  color: #60a5fa;
+}
+
+.sub-title {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: #94a3b8;
+}
+
+.db-status {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #60a5fa;
+  background: rgba(96, 165, 250, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(96, 165, 250, 0.2);
+}
+
+.form-body {
+  padding: 2.5rem;
+}
+
+/* Grids */
+.input-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.input-grid-5 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+}
+
+.input-grid-double {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.input-group label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.label-blue { color: #2563eb !important; }
+
+/* Elements */
+.custom-select, .custom-input, .custom-textarea {
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1e293b;
+  transition: all 0.2s;
+}
+
+.select-blue {
+  background: #eff6ff;
+  border-color: #dbeafe;
+  color: #1e40af;
+}
+
+.priority-red {
+  color: #dc2626;
+}
+
+.status-blue {
+  color: #2563eb;
+}
+
+.submit-btn-large {
+  width: 100%;
+  margin-top: 3rem;
+  padding: 1.5rem;
+  background: #0f172a;
+  color: white;
+  border-radius: 16px;
+  font-weight: 900;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  transition: all 0.3s;
+}
+
+.submit-btn-large:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(37, 99, 235, 0.3);
+}

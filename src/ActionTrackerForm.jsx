@@ -1,0 +1,313 @@
+import { useEffect, useState } from 'react'
+import { supabase } from './supabaseClient'
+import './Action.css' // Individual modular CSS
+
+export default function ActionTrackerForm({ initialData, onComplete }) {
+  const [enums, setEnums] = useState({ 
+    staff: [], priority: [], status: [], area: [], 
+    equipment: [], depts: [], disciplines: [], contractors: [], aspects: [], sources: [] 
+  })
+  const [loading, setLoading] = useState(false)
+  
+  const [formData, setFormData] = useState({
+    date_raised: new Date().toISOString().split('T')[0],
+    raised_by: '',
+    source: '', 
+    department: '',
+    responsibility: '',
+    discipline: '',
+    aspect: '', 
+    plant_area: '',
+    main_equipment: '',
+    issue: '', 
+    action_details: '', 
+    next_steps: '', 
+    constraints: '', 
+    comments: '',
+    priority: '',
+    status: 'Open',
+    progress_report: '', 
+    training_and_awareness: '', 
+    action_start_date: '',
+    action_completion_date: ''
+  })
+
+  // Populates form if we are in Edit Mode
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData)
+    }
+  }, [initialData])
+
+  useEffect(() => {
+    async function fetchAllEnums() {
+      const { data: staff } = await supabase.rpc('get_enum_values', { enum_name: 'staff_name' })
+      const { data: prio } = await supabase.rpc('get_enum_values', { enum_name: 'priority_level' })
+      const { data: stat } = await supabase.rpc('get_enum_values', { enum_name: 'action_status' })
+      const { data: area } = await supabase.rpc('get_enum_values', { enum_name: 'plant_area_type' })
+      const { data: equip } = await supabase.rpc('get_enum_values', { enum_name: 'equipment_type' })
+      const { data: depts } = await supabase.rpc('get_enum_values', { enum_name: 'dept_name' })
+      const { data: discs } = await supabase.rpc('get_enum_values', { enum_name: 'discipline_type' })
+      const { data: contr } = await supabase.rpc('get_enum_values', { enum_name: 'contractor_name' })
+      const { data: asp } = await supabase.rpc('get_enum_values', { enum_name: 'aspect_type' })
+      const { data: src } = await supabase.rpc('get_enum_values', { enum_name: 'source_type' })
+      
+      setEnums({ 
+        staff: staff || [], 
+        priority: prio || [], 
+        status: stat || [], 
+        area: area || [], 
+        equipment: equip || [], 
+        depts: depts || [], 
+        disciplines: discs || [], 
+        contractors: contr || [],
+        aspects: asp || [],
+        sources: src || []
+      })
+    }
+    fetchAllEnums()
+  }, [])
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    
+    let response;
+
+    // Check if we are updating an existing ID or inserting a new row
+    if (formData.id) {
+      response = await supabase
+        .from('actions')
+        .update(formData)
+        .eq('id', formData.id)
+    } else {
+      response = await supabase
+        .from('actions')
+        .insert([formData])
+    }
+
+    const { error } = response;
+
+    if (error) {
+      alert("Submission Error: " + error.message)
+    } else {
+      alert(formData.id ? "Action Updated Successfully!" : "Comprehensive Action Logged Successfully!")
+      
+      if (onComplete) {
+        onComplete(); // Returns to the list view
+      } else {
+        setFormData({ 
+          date_raised: new Date().toISOString().split('T')[0],
+          raised_by: '',
+          source: '', 
+          department: '',
+          responsibility: '',
+          discipline: '',
+          aspect: '', 
+          plant_area: '',
+          main_equipment: '',
+          issue: '', 
+          action_details: '', 
+          next_steps: '', 
+          constraints: '', 
+          comments: '',
+          priority: '',
+          status: 'Open',
+          progress_report: '', 
+          training_and_awareness: '', 
+          action_start_date: '',
+          action_completion_date: ''
+        })
+      }
+    }
+    setLoading(false)
+  }
+
+  return (
+    <div className="form-container">
+      <form onSubmit={handleSubmit}>
+        <div className="form-header" style={{ background: formData.id ? '#b45309' : '#0f172a' }}>
+          <div className="header-flex">
+            <div>
+              <h2 className="main-title">{formData.id ? 'Edit Action Record' : 'Maintenance Control Board'}</h2>
+              <p className="sub-title">Engineering Lifecycle Tracking</p>
+            </div>
+            <div className="db-status">
+              <span className="dot"></span> {formData.id ? 'UPDATE MODE' : 'Live Database Active'}
+            </div>
+          </div>
+        </div>
+
+        <div className="form-body">
+          {/* SECTION 1 */}
+          <div className="section-divider">
+            <span className="section-number">01</span>
+            <span className="section-title">Origin & Ownership</span>
+          </div>
+          
+          <div className="input-grid-5">
+            <div className="input-group">
+              <label>Raised By</label>
+              <select className="custom-select" required value={formData.raised_by} onChange={(e)=>setFormData({...formData, raised_by: e.target.value})}>
+                <option value="">Select Staff...</option>
+                {enums.staff.map((s) => (<option key={s} value={s}>{s}</option>))}
+              </select>
+            </div>
+            <div className="input-group">
+              <label>Source</label>
+              <select className="custom-select" required value={formData.source} onChange={(e)=>setFormData({...formData, source: e.target.value})}>
+                <option value="">Select Source...</option>
+                {enums.sources.map((s) => (<option key={s} value={s}>{s}</option>))}
+              </select>
+            </div>
+            <div className="input-group">
+              <label>Department</label>
+              <select className="custom-select" required value={formData.department} onChange={(e)=>setFormData({...formData, department: e.target.value})}>
+                <option value="">Select Dept...</option>
+                {enums.depts.map((d) => (<option key={d} value={d}>{d}</option>))}
+              </select>
+            </div>
+            <div className="input-group">
+              <label>Responsibility</label>
+              <select className="custom-select" required value={formData.responsibility} onChange={(e)=>setFormData({...formData, responsibility: e.target.value})}>
+                <option value="">Assigned To...</option>
+                {enums.staff.map((s) => (<option key={s} value={s}>{s}</option>))}
+              </select>
+            </div>
+            <div className="input-group">
+              <label className="label-blue">Contractor / Vendor</label>
+              <select className="custom-select select-blue" value={formData.contractor} onChange={(e)=>setFormData({...formData, contractor: e.target.value})}>
+                <option value="">Internal Only</option>
+                {enums.contractors.map((c) => (<option key={c} value={c}>{c}</option>))}
+              </select>
+            </div>
+          </div>
+
+          {/* SECTION 2 */}
+          <div className="section-divider">
+            <span className="section-number">02</span>
+            <span className="section-title">Asset & Discipline</span>
+          </div>
+
+          <div className="input-grid">
+            <div className="input-group">
+              <label>Discipline</label>
+              <select className="custom-select" required value={formData.discipline} onChange={(e)=>setFormData({...formData, discipline: e.target.value})}>
+                <option value="">Select Discipline...</option>
+                {enums.disciplines.map((d) => (<option key={d} value={d}>{d}</option>))}
+              </select>
+            </div>
+            <div className="input-group">
+              <label>Aspect</label>
+              <select className="custom-select" required value={formData.aspect} onChange={(e)=>setFormData({...formData, aspect: e.target.value})}>
+                <option value="">Select Aspect...</option>
+                {enums.aspects.map((a) => (<option key={a} value={a}>{a}</option>))}
+              </select>
+            </div>
+            <div className="input-group">
+              <label>Plant Area</label>
+              <select className="custom-select" required value={formData.plant_area} onChange={(e)=>setFormData({...formData, plant_area: e.target.value})}>
+                <option value="">Select Area...</option>
+                {enums.area.map((a) => (<option key={a} value={a}>{a}</option>))}
+              </select>
+            </div>
+            <div className="input-group">
+              <label>Main Equipment</label>
+              <select className="custom-select" required value={formData.main_equipment} onChange={(e)=>setFormData({...formData, main_equipment: e.target.value})}>
+                <option value="">Select Equipment...</option>
+                {enums.equipment.map((eq) => (<option key={eq} value={eq}>{eq}</option>))}
+              </select>
+            </div>
+          </div>
+
+          {/* SECTION 3 */}
+          <div className="section-divider">
+            <span className="section-number">03</span>
+            <span className="section-title">Maintenance Strategy</span>
+          </div>
+
+          <div className="text-area-stack">
+            <div className="input-group full-width">
+              <label>Issue (State the Problem)</label>
+              <textarea className="custom-textarea" required rows="2" placeholder="Define the problem..." value={formData.issue} onChange={(e)=>setFormData({...formData, issue: e.target.value})}></textarea>
+            </div>
+            
+            <div className="input-grid-double">
+              <div className="input-group">
+                <label>Action Steps to Take</label>
+                <textarea className="custom-textarea" rows="2" placeholder="Step-by-step procedure..." value={formData.action_details} onChange={(e)=>setFormData({...formData, action_details: e.target.value})}></textarea>
+              </div>
+              <div className="input-group">
+                <label>Progress Report</label>
+                <textarea className="custom-textarea" rows="2" placeholder="Current status updates..." value={formData.progress_report} onChange={(e)=>setFormData({...formData, progress_report: e.target.value})}></textarea>
+              </div>
+              <div className="input-group">
+                <label>Training and Awareness</label>
+                <textarea className="custom-textarea" rows="2" placeholder="Required personnel training..." value={formData.training_and_awareness} onChange={(e)=>setFormData({...formData, training_and_awareness: e.target.value})}></textarea>
+              </div>
+              <div className="input-group">
+                <label>Next Steps</label>
+                <textarea className="custom-textarea" rows="2" placeholder="Immediate future actions..." value={formData.next_steps} onChange={(e)=>setFormData({...formData, next_steps: e.target.value})}></textarea>
+              </div>
+              <div className="input-group">
+                <label>Constraints</label>
+                <textarea className="custom-textarea" rows="2" placeholder="Blocking issues/hold-ups..." value={formData.constraints} onChange={(e)=>setFormData({...formData, constraints: e.target.value})}></textarea>
+              </div>
+              <div className="input-group">
+                <label>Comments</label>
+                <textarea className="custom-textarea" rows="2" placeholder="General notes..." value={formData.comments} onChange={(e)=>setFormData({...formData, comments: e.target.value})}></textarea>
+              </div>
+            </div>
+          </div>
+
+          {/* SECTION 4 */}
+          <div className="timeline-section">
+            <div className="input-grid">
+              <div className="input-group">
+                <label>Priority</label>
+                <select className="custom-select priority-red" required value={formData.priority} onChange={(e)=>setFormData({...formData, priority: e.target.value})}>
+                  <option value="">Select Priority...</option>
+                  {enums.priority.map((p) => (<option key={p} value={p}>{p}</option>))}
+                </select>
+              </div>
+              <div className="input-group">
+                <label>Current Status</label>
+                <select className="custom-select status-blue" required value={formData.status} onChange={(e)=>setFormData({...formData, status: e.target.value})}>
+                  {enums.status.map((s) => (<option key={s} value={s}>{s}</option>))}
+                </select>
+              </div>
+              <div className="input-group">
+                <label>Actual Start Date</label>
+                <input type="date" className="custom-input" value={formData.action_start_date} onChange={(e)=>setFormData({...formData, action_start_date: e.target.value})} />
+              </div>
+              <div className="input-group">
+                <label>Target Completion</label>
+                <input type="date" className="custom-input" value={formData.action_completion_date} onChange={(e)=>setFormData({...formData, action_completion_date: e.target.value})} />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <button 
+              disabled={loading} 
+              className="submit-btn-large" 
+              style={{ background: formData.id ? '#b45309' : '#0f172a' }}
+            >
+              {loading ? 'PROCESSING...' : formData.id ? 'SAVE CHANGES' : 'COMMIT FULL ACTION DATA'}
+            </button>
+            {formData.id && (
+              <button 
+                type="button" 
+                onClick={onComplete} 
+                className="submit-btn-large" 
+                style={{ background: '#64748b', marginTop: '3rem' }}
+              >
+                CANCEL
+              </button>
+            )}
+          </div>
+        </div>
+      </form>
+    </div>
+  )
+}
