@@ -1,4 +1,6 @@
-/* CONTAINER & HEADER */
+/* TrainingList.css */
+
+/* Reusing professional container patterns */
 .table-view-container {
   max-width: 100%;
   margin: 0 auto;
@@ -38,7 +40,7 @@
 
 .global-search-input {
   width: 300px;
-  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  padding: 0.75rem 1rem;
   background: #f8fafc;
   border: 2px solid #e2e8f0;
   border-radius: 12px;
@@ -56,6 +58,10 @@
   border: none;
 }
 
+.sync-btn:hover {
+  background: #1e3a8a;
+}
+
 /* TABLE ARCHITECTURE */
 .table-outer-shell {
   background: white;
@@ -67,7 +73,7 @@
 .scroll-container {
   overflow-x: auto;
   overflow-y: auto;
-  max-height: calc(100vh - 300px);
+  max-height: calc(100vh - 250px);
 }
 
 .management-table {
@@ -85,45 +91,43 @@
 .management-table th {
   padding: 1rem;
   color: #94a3b8;
-  font-size: 0.6rem;
+  font-size: 0.65rem;
   font-weight: 900;
   text-transform: uppercase;
   text-align: left;
 }
 
 .management-table td {
-  padding: 1rem;
+  padding: 1.25rem 1rem;
   border-bottom: 1px solid #f1f5f9;
   vertical-align: middle;
 }
 
-/* ADMIN TOOLS */
-.admin-cell {
-  background: rgba(15, 23, 42, 0.02);
-  border-right: 1px solid #e2e8f0;
-}
-
+/* ADMIN CELLS */
 .admin-btns-row {
   display: flex;
   gap: 0.5rem;
-  justify-content: center;
 }
 
 .mini-btn {
-  width: 30px;
-  height: 30px;
-  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: white;
   border: 1px solid #e2e8f0;
   cursor: pointer;
+  transition: all 0.2s;
 }
 
-.mini-btn:hover { background: #f8fafc; transform: scale(1.1); }
+.mini-btn:hover {
+  background: #f8fafc;
+  transform: scale(1.1);
+}
 
-/* EXPANSION SYSTEM */
+/* EXPANSION PANEL */
 .info-toggle-btn {
   background: #f1f5f9;
   border: 1px solid #cbd5e1;
@@ -136,15 +140,17 @@
   width: 100%;
 }
 
-.info-toggle-btn:hover { background: #0f172a; color: white; }
+.info-toggle-btn:hover {
+  background: #10b981;
+  color: white;
+  border-color: #10b981;
+}
 
-.row-expanded-active { background: #f8fafc !important; }
-
-.expanded-detail-row { background: #f8fafc !important; }
+.row-expanded-active { background: #f0fdf4 !important; }
 
 .detail-pane {
   padding: 2rem;
-  background: white;
+  background: #ffffff;
   border: 2px solid #e2e8f0;
   border-radius: 16px;
   margin: 10px;
@@ -153,7 +159,7 @@
 
 .detail-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 2fr 1fr;
   gap: 2rem;
 }
 
@@ -164,60 +170,34 @@
   text-transform: uppercase;
   color: #94a3b8;
   margin-bottom: 0.5rem;
-  margin-top: 1.5rem;
 }
-
-.detail-col label:first-child { margin-top: 0; }
 
 .detail-text {
   font-size: 0.85rem;
-  line-height: 1.5;
+  line-height: 1.6;
   color: #1e293b;
-  background: #f1f5f9;
-  padding: 0.75rem;
+  background: #f8fafc;
+  padding: 1rem;
   border-radius: 8px;
-  margin-bottom: 0.5rem;
+  border-left: 4px solid #10b981;
 }
 
-.highlight-blue { border-left: 4px solid #3b82f6; background: #eff6ff; }
-.highlight-red { border-left: 4px solid #ef4444; background: #fef2f2; }
-
-/* MILESTONES & BADGES */
-.milestone-list { background: #f8fafc; padding: 10px; border-radius: 8px; }
-
-.ms-item {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.75rem;
-  padding: 4px 0;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.ms-item span { font-weight: 800; color: #64748b; }
-
-.attachment-link {
-  display: block;
-  background: #0f172a;
-  color: white;
-  text-align: center;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 0.7rem;
-  font-weight: 800;
-  text-decoration: none;
-}
-
+/* TYPOGRAPHY & BADGES */
 .badge {
   padding: 0.35rem 0.75rem;
   border-radius: 100px;
   font-size: 0.65rem;
   font-weight: 900;
   text-transform: uppercase;
+  display: inline-block;
 }
 
 .status-complete { background: #dcfce7; color: #166534; }
-.status-progress { background: #fef3c7; color: #92400e; }
-.prio-high { background: #fee2e2; color: #b91c1c; }
+.status-open { background: #fef3c7; color: #92400e; }
+
+.text-bold { font-weight: 800; color: #1e293b; font-size: 0.85rem; }
+.text-tiny { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; color: #64748b; }
+
 .resp-name-tag {
   font-size: 0.75rem;
   font-weight: 700;
@@ -227,5 +207,20 @@
   border-radius: 4px;
 }
 
-.text-bold { font-weight: 800; color: #1e293b; font-size: 0.85rem; }
-.text-tiny { font-size: 0.6rem; font-weight: 800; }
+.milestone-list { background: #f8fafc; padding: 10px; border-radius: 8px; }
+.ms-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  padding: 4px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+.ms-item span { font-weight: 800; color: #64748b; }
+
+.loading-cell {
+  padding: 4rem;
+  text-align: center;
+  font-weight: 800;
+  color: #94a3b8;
+  letter-spacing: 0.1em;
+}

@@ -34,5 +34,86 @@
   color: #0f172a;
 }
 
-/* Inherit Global Table Styles from ActionList.css where possible */
-/* Ensure you have ActionList.css imported or shared classes defined */
+.discipline-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #3b82f6;
+  text-transform: uppercase;
+}
+
+/* EXPANSION STYLES */
+.info-toggle-btn {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #475569;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s;
+}
+
+.info-toggle-btn:hover {
+  background: #1e3a8a;
+  color: white;
+}
+
+.detail-pane {
+  padding: 1.5rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  margin: 10px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2rem;
+}
+
+.detail-col label {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 0.5rem;
+}
+
+.detail-text {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: #334155;
+  background: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+}
+
+.highlight-red { border-left: 3px solid #ef4444; background: #fef2f2; }
+.highlight-blue { border-left: 3px solid #3b82f6; background: #eff6ff; }
+
+.milestone-list {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+}
+
+.ms-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.ms-item span { font-weight: 800; color: #64748b; }
+
+/* SHARED TABLE STYLES RE-CAP */
+.admin-btns-row { display: flex; gap: 5px; }
+.mini-btn { border: 1px solid #e2e8f0; background: white; padding: 4px; border-radius: 4px; cursor: pointer; }
+.mini-btn:hover { background: #f1f5f9; }

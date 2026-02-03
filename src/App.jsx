@@ -5,7 +5,8 @@ import TrainingForm from './TrainingForm'
 import ActionTrackerForm from './ActionTrackerForm'
 import ActionListView from './ActionListView'
 import DailyLogListView from './DailyLogListView'
-import Auth from './Auth' // Import your new Auth component
+import TrainingListView from './TrainingListView' // New Import
+import Auth from './Auth' 
 import './App.css' 
 
 function App() {
@@ -15,15 +16,14 @@ function App() {
   // States for editing different types of data
   const [editActionData, setEditActionData] = useState(null)
   const [editLogData, setEditLogData] = useState(null)
+  const [editTrainingData, setEditTrainingData] = useState(null) // New Edit State
 
   // 1. Authentication Session Management
   useEffect(() => {
-    // Check for existing session on load
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
     })
 
-    // Listen for login/logout changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
     })
@@ -36,7 +36,8 @@ function App() {
     { id: 'view_logs', label: 'Operations Board', icon: 'M4 6h16M4 10h16M4 14h16M4 18h16' },
     { id: 'actions', label: 'Log New Action', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
     { id: 'view_actions', label: 'Action Registry', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2' },
-    { id: 'training', label: 'Skill Matrix', icon: 'M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z' }
+    { id: 'training', label: 'Log New Training', icon: 'M12 14l9-5-9-5-9 5 9 5z' }, // Separate Log tab
+    { id: 'view_training', label: 'Skill Matrix Board', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10' } // New View tab
   ]
 
   // Handlers for switching to edit mode
@@ -50,13 +51,18 @@ function App() {
     setActiveTab('logs');
   }
 
+  const handleEditTraining = (record) => {
+    setEditTrainingData(record);
+    setActiveTab('training');
+  }
+
   const handleTabChange = (tabId) => {
     if (tabId !== 'actions') setEditActionData(null);
     if (tabId !== 'logs') setEditLogData(null);
+    if (tabId !== 'training') setEditTrainingData(null);
     setActiveTab(tabId);
   }
 
-  // Logout handler
   const handleLogout = async () => {
     await supabase.auth.signOut()
   }
@@ -67,12 +73,12 @@ function App() {
       case 'view_logs': return { title: 'Operations Board', desc: 'Review historical daily log entries' };
       case 'actions': return { title: editActionData ? 'Update Action Record' : 'Log Maintenance', desc: editActionData ? `Editing Action ID: ${editActionData.id}` : 'Create new engineering tasks' };
       case 'view_actions': return { title: 'Action Registry', desc: 'Global maintenance task status' };
-      case 'training': return { title: 'Skill Matrix', desc: 'Personnel competency records' };
+      case 'training': return { title: editTrainingData ? 'Update Training Record' : 'Skill Development', desc: editTrainingData ? `Editing Record: ${editTrainingData.trainee_name}` : 'Log new competency certifications' };
+      case 'view_training': return { title: 'Skill Matrix Board', desc: 'Full personnel training history' };
       default: return { title: 'Dashboard', desc: 'Welcome to ENG-PORTAL' };
     }
   }
 
-  // 2. Gatekeeper: Show Auth screen if not logged in
   if (!session) {
     return <Auth />
   }
@@ -111,11 +117,10 @@ function App() {
               <div className="user-avatar">
                 {session.user.email.substring(0, 2).toUpperCase()}
               </div>
-              <span style={{color: 'white', fontSize: '0.85rem', fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis'}}>
+              <span className="user-email-text">
                 {session.user.email}
               </span>
             </div>
-            {/* Logout Button */}
             <button onClick={handleLogout} className="logout-btn">
               Sign Out
             </button>
@@ -161,7 +166,16 @@ function App() {
             <ActionListView onEdit={handleEditAction} />
           )}
           
-          {activeTab === 'training' && <TrainingForm />}
+          {/* TRAINING */}
+          {activeTab === 'training' && (
+            <TrainingForm 
+              initialData={editTrainingData}
+              onComplete={() => { setEditTrainingData(null); setActiveTab('view_training'); }}
+            />
+          )}
+          {activeTab === 'view_training' && (
+            <TrainingListView onEdit={handleEditTraining} />
+          )}
         </main>
       </div>
     </div>
