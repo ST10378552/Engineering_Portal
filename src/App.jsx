@@ -1,17 +1,35 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { supabase } from './supabaseClient'
 import DailyLogForm from './DailyLogForm'
 import TrainingForm from './TrainingForm'
 import ActionTrackerForm from './ActionTrackerForm'
 import ActionListView from './ActionListView'
-import DailyLogListView from './DailyLogListView' // Ensure this is imported
+import DailyLogListView from './DailyLogListView'
+import Auth from './Auth' // Import your new Auth component
 import './App.css' 
 
 function App() {
+  const [session, setSession] = useState(null)
   const [activeTab, setActiveTab] = useState('logs')
   
-  // Separate states for editing different types of data
+  // States for editing different types of data
   const [editActionData, setEditActionData] = useState(null)
   const [editLogData, setEditLogData] = useState(null)
+
+  // 1. Authentication Session Management
+  useEffect(() => {
+    // Check for existing session on load
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    // Listen for login/logout changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   const navItems = [
     { id: 'logs', label: 'Daily Operations', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
@@ -33,10 +51,14 @@ function App() {
   }
 
   const handleTabChange = (tabId) => {
-    // Clear editing states if manually navigating away from the forms
     if (tabId !== 'actions') setEditActionData(null);
     if (tabId !== 'logs') setEditLogData(null);
     setActiveTab(tabId);
+  }
+
+  // Logout handler
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
   }
 
   const getHeaderInfo = () => {
@@ -50,8 +72,14 @@ function App() {
     }
   }
 
+  // 2. Gatekeeper: Show Auth screen if not logged in
+  if (!session) {
+    return <Auth />
+  }
+
   return (
     <div className="app-container">
+      {/* SIDEBAR */}
       <aside className="sidebar">
         <div className="sidebar-header">
           <div className="logo-icon">E</div>
@@ -80,13 +108,22 @@ function App() {
           <div className="user-card">
             <p>Logged in as</p>
             <div className="user-info">
-              <div className="user-avatar">DN</div>
-              <span style={{color: 'white', fontSize: '0.85rem', fontWeight: 700}}>Devesh & Partner</span>
+              <div className="user-avatar">
+                {session.user.email.substring(0, 2).toUpperCase()}
+              </div>
+              <span style={{color: 'white', fontSize: '0.85rem', fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis'}}>
+                {session.user.email}
+              </span>
             </div>
+            {/* Logout Button */}
+            <button onClick={handleLogout} className="logout-btn">
+              Sign Out
+            </button>
           </div>
         </div>
       </aside>
 
+      {/* MAIN CONTENT AREA */}
       <div className="main-area">
         <header className="top-header">
           <div className="header-title">
@@ -102,7 +139,7 @@ function App() {
         </header>
 
         <main className="content-scroll">
-          {/* DAILY LOGS: FORM & LIST */}
+          {/* DAILY LOGS */}
           {activeTab === 'logs' && (
             <DailyLogForm 
               initialData={editLogData} 
@@ -113,7 +150,7 @@ function App() {
             <DailyLogListView onEdit={handleEditLog} />
           )}
 
-          {/* ACTIONS: FORM & LIST */}
+          {/* ACTIONS */}
           {activeTab === 'actions' && (
             <ActionTrackerForm 
               initialData={editActionData} 
